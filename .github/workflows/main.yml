@@ -1,0 +1,28 @@
+name: Probar acceso FCBQ
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prueba:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Probar página FCBQ
+        run: |
+          curl -L -s \
+            "https://www.basquetcatala.cat/partits/calendari_equip_global/3541/90523" \
+            -o pagina.html
+
+          echo "Tamaño recibido:"
+          wc -c pagina.html
+
+          echo "Partidos encontrados:"
+          grep -o "FLORANGE U.E.MATARÓ" pagina.html | wc -l || true
+
+          echo "Comprobación de seguridad:"
+          if grep -qi "Verificació de seguretat" pagina.html; then
+            echo "BLOQUEADO_POR_SEGURIDAD"
+          else
+            echo "SIN_BLOQUEO_DE_SEGURIDAD"
+          fi
